@@ -35,10 +35,16 @@ if(!password_verify($_POST['password'], $result[0]['password'])){
 }
 
 $_SESSION['userinfo'] = $result[0];
+$_SESSION['2FA'] = false;
 
 // view page based on role
 if ($_SESSION['userinfo']['roleid'] == 1){
-    header('Location: ./views/user.php');
+    if ($_SESSION['userinfo']['verified'] != 1){
+        header('Location: ./views/user.php');
+    }
+    else{
+        header('Location: ./send-2fa-code.php');
+    }
     exit;
 }
 else if($_SESSION['userinfo']['roleid'] == 2){
