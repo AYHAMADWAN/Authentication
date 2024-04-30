@@ -16,8 +16,15 @@
             <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="confirm_password" placeholder="Confirm Password" required>
             <input type="submit" value="Signup">
+            <button type="button" onclick="run()" style="margin-top: 10px;">Login with Facebook</button>
         </form>
         <a href='./login.php'>Already have an account?</a>
     </div>
+
+    <script>
+        function run(){
+            window.location.href = "http://localhost/authentication/OAuth/run.php";
+        }
+      </script>
 </body>
 </html>

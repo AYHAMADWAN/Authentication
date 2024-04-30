@@ -2,11 +2,12 @@
 
 include __DIR__ . '/Database.php';
 
-if(!isset($_POST['username']) || empty($_POST['username']) || !isset($_POST['password']) || empty($_POST['password']) ||
- !isset($_POST['confirm_password']) || empty($_POST['confirm_password']) || !isset($_POST['email']) || empty($_POST['email'])){
+if((!isset($_POST['username']) || empty($_POST['username']) || !isset($_POST['password']) || empty($_POST['password']) ||
+ !isset($_POST['confirm_password']) || empty($_POST['confirm_password']) || !isset($_POST['email']) || empty($_POST['email'])) && (!isset($_POST['jwt']) || $_POST['jwt'] != 'true')){
     header('Location: ./views/signup.php?error=fill+in+everything');
     exit;
 }
+
 
 // connect to database
 $database = new Database('localhost', 'authdb', 'root', '');
@@ -35,18 +36,28 @@ if(!empty($email_result)){
 }
 
 // make sure passwords match
-if($_POST['password'] != $_POST['confirm_password']){
-    header('Location: ./views/signup.php?error=passwords+don\'t+match');
-    exit;
+if(isset($_POST['password'])){
+    if($_POST['password'] != $_POST['confirm_password']){
+        header('Location: ./views/signup.php?error=passwords+don\'t+match');
+        exit;
+    }
+    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 }
 
-$hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
 
 // insert the values into the database
 $sql = 'INSERT INTO users(username, password, email) VALUES(:username, :password, :email)';
-$params = [':username'=>$_POST['username'], ':email'=>$_POST['email'], ':password'=>$hashed_password];
+$params = [':username'=>$_POST['username'], ':email'=>$_POST['email'], ':password'=>$hashed_password ?? 'oauth'];
 Database::query($sql, $params);
-header('Location: ./views/login.php');
+
+if (isset($hased_password)){
+    header('Location: ./views/login.php');
+} else{
+    session_start();
+    $_SESSION['userinfo'] = ['username'=>$_POST['username'], 'email'=>$_POST['email'], 'verified'=>0];
+    header('Location: ./views/user.php');
+}
 
 
 // close database connection
