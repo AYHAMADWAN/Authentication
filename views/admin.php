@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['userinfo']) || empty($_SESSION['userinfo']) || $_SESSION['userinfo']['roleid'] != 2){
+if(!isset($_SESSION['userinfo']) || empty($_SESSION['userinfo']) || $_SESSION['userinfo']['roleid'] != 2 || (isset($_SESSION['userinfo']['authenticator_key']) && !is_null($_SESSION['userinfo']['authenticator_key']) && isset($_SESSION['authenticator_code']) && $_SESSION['authenticator_code'] != true) || !isset($_SESSION['authenticator_code'])){
     echo 'you are unauthorized to use the admin page';
     exit;
 }
@@ -48,7 +48,11 @@ if(!isset($_SESSION['userinfo']) || empty($_SESSION['userinfo']) || $_SESSION['u
 
         echo 'scan this QR code with authenticator app<br>';
         echo $inlineUrl;
+
+        echo '<a href="./enter-code.php">go to Code Verification</a>';
     }
     ?>
+    <br><br>
+    <a href="../logout.php">Logout</a>
 </body>
 </html>

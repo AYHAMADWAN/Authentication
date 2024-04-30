@@ -48,7 +48,12 @@ if ($_SESSION['userinfo']['roleid'] == 1){
     exit;
 }
 else if($_SESSION['userinfo']['roleid'] == 2){
-    header('Location: ./views/admin.php');
+    if(isset($_SESSION['userinfo']['authenticator_key'])){
+        header('Location: ./views/enter-code.php');
+        exit;
+    }else{
+        header('Location: ./views/admin.php');
+    }
     exit;
 }
 
